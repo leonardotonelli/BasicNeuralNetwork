@@ -28,8 +28,8 @@ class NeuralNetwork:
             self.activation_function = lambda x: sigmoid(x)
 
         res = x
-        activations = [x]  # Store activations for backpropagation
-        pre_activations = []  # Store z values for backpropagation
+        activations = [x]  
+        pre_activations = []  
 
         for i in range(len(self.weights_matrices)):
             W = self.weights_matrices[i]
@@ -45,23 +45,49 @@ class NeuralNetwork:
         
         return res, activations, pre_activations
     
-
     def backward(self, x, y, activations, pre_activations):
-        # Backpropagation to calculate gradients
         gradients_w = [np.zeros_like(w) for w in self.weights_matrices]
         gradients_b = [np.zeros_like(b) for b in self.biases]
         
         m = y.shape[0]
-        
-        # Compute the derivative of the loss with respect to the softmax output
-        delta = activations[-1] - y  # y_pred - y_true
+        delta = activations[-1] - y  
 
-        # Backpropagate through layers
         for i in reversed(range(len(self.weights_matrices))):
             gradients_w[i] = np.dot(delta, activations[i].T) / m
             gradients_b[i] = np.sum(delta, axis=1, keepdims=True) / m
-            if i > 0:  # Skip backpropagating to the input layer
+            if i > 0:  
                 delta = np.dot(self.weights_matrices[i].T, delta) * self.activation_derivative(pre_activations[i-1])
         
         return gradients_w, gradients_b
+    
+    def activation_derivative(self, z):
+        if self.activation_function == "sigmoid":
+            sigmoid = 1 / (1 + np.exp(-z))
+            return sigmoid * (1 - sigmoid)
+        
+    def fit(self, X, Y, epochs=1000, alpha=0.01):
+        def grad_f(params):
+            self.weights_matrices, self.biases = params
+            _, activations, pre_activations = self.forward(X)
+            grad_w, grad_b = self.backward(X, Y, activations, pre_activations)
+            return grad_w, grad_b
+        
+        # cross entropy loss (for classification)
+        def compute_loss(self, y_true, y_pred):
+            m = y_true.shape[0]
+            return -np.sum(y_true * np.log(y_pred)) / m
+
+        for epoch in range(epochs):
+            # forward pass
+            y_pred, activations, pre_activations = self.forward(X)
+            loss = self.compute_loss(Y, y_pred)
+            gradients_w, gradients_b = self.backward(X, Y, activations, pre_activations)
+
+            # step
+            for i in range(len(self.weights_matrices)):
+                self.weights_matrices[i] -= alpha * gradients_w[i]
+                self.biases[i] -= alpha * gradients_b[i]
+
+            if epoch % 100 == 0:
+                print(f"Epoch {epoch}, Loss: {loss}")
 
