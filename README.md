@@ -4,16 +4,6 @@
 
 This project implements a simple feedforward neural network from scratch using NumPy. The neural network is designed for multi-class classification tasks and employs backpropagation for training. The example provided demonstrates how to train the network on a synthetic dataset generated using the `make_blobs` function from the `sklearn` library.
 
-## Table of Contents
-
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Neural Network Structure](#neural-network-structure)
-- [Training Process](#training-process)
-- [Results](#results)
-- [License](#license)
-
 ## Features
 
 - **Feedforward Neural Network**: Implements a multi-layer neural network with customizable architecture.
